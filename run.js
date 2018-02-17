@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const config = require("./config.json");
 const prefix = config.prefix;
+const commandList = require("./commandList.json");
+
 // Require the Spotify Web Helper
 const NodeSpotify = require ("node-spotify-helper");
 const webApi = new NodeSpotify.SpotifyWebApi ();
@@ -46,6 +48,17 @@ client.on("message", (message) => {
     } else
     if (command == "unpause") {
       unpauseTrack();
+    } else 
+    if (command == "help") {
+      var commands = '**Command List**' + '\n\n';
+      for(var i in commandList){
+          if(commandList.hasOwnProperty(i)){
+              var tempstring = JSON.stringify(commandList[i]);
+              tempstring = tempstring.slice(1, (tempstring.length-1));
+              commands += tempstring + '\n';
+          }
+      }
+      message.channel.send(commands);
     }
 });
 
