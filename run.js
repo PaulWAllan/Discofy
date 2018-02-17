@@ -19,6 +19,14 @@ async function playTrackFromQuery(query) {
   await webHelper.play(tracks[0].uri);
 }
 
+async function pauseTrack() {
+  await webHelper.pause();
+}
+
+async function unpauseTrack() {
+  await webHelper.unpause();
+}
+
 client.on("ready", () => {
     init();
     console.log("Discofy: Ready to roll out!");
@@ -32,6 +40,12 @@ client.on("message", (message) => {
       // Run a query
       const [...query] = args.splice(0);
       playTrackFromQuery(query.join(" "));
+    } else
+    if (command == "pause") {
+      pauseTrack();
+    } else
+    if (command == "unpause") {
+      unpauseTrack();
     }
 });
 
