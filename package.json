@@ -1,0 +1,11 @@
+{
+  "name": "Discofy",
+  "version": "1.0.0",
+  "description": "Discord Bot that interacts with your Spotify queue",
+  "author": "Paul Allan, Aman Deol, Jason Wang, Kenney Wu, Jordan Yuen",
+  "dependencies": {
+    "discord.js": "^11.3.0",
+    "node-spotify-helper": "^0.4.7",
+    "pauseable": "^0.3.0"
+  }
+}
