@@ -14,13 +14,15 @@ client.on("message", (message) => {
     } else if (message.content.startsWith(prefix + "ping")) {
         message.channel.send("pong!");
     } else if (message.content.startsWith(prefix + "help")) {
-        var commands = "```" + '\n';
+        var commands = '**Command List**' + '\n\n';
         for(var i in commandList){
             if(commandList.hasOwnProperty(i)){
-                commands += JSON.stringify(commandList[i]) + '\n\n';
+                var tempstring = JSON.stringify(commandList[i]);
+                tempstring = tempstring.slice(1, (tempstring.length-1));
+                commands += tempstring + '\n';
             }
         }
-        message.channel.send(commands + "```");
+        message.channel.send(commands);
     }
 });
 
