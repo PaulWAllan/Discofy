@@ -13,8 +13,15 @@ client.on("message", (message) => {
         message.channel.send("Make me do stuff!");//TODO: do play stuff here
     } else if (message.content.startsWith(prefix + "ping")) {
         message.channel.send("pong!");
-    } //else if (message.content.startsWith(prefix + "help")) {
-        
+    } else if (message.content.startsWith(prefix + "help")) {
+        var commands = "```" + '\n';
+        for(var i in commandList){
+            if(commandList.hasOwnProperty(i)){
+                commands += JSON.stringify(commandList[i]) + '\n\n';
+            }
+        }
+        message.channel.send(commands + "```");
+    }
 });
 
 client.login(config.token);
