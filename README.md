@@ -24,13 +24,23 @@ The inspiration for this bot is to interface with Spotify so that a user can all
 
 This bot relies on a user having Spotify premium and be listening along in the Spotify app.
 
-## Install: 
+## Install
 
+1. Clone or zip this repository to anywhere on your computer.
+2. Run `npm update -S` on the root directory of Discofy.
+3. Configure the bot (Instructions below).
+4. Run `node run.js` on the root directory of Discofy.
 
+### Requirements
 
+* Spotify premium account.
+* Spotify app installed on the computer running the bot.
+* Node.js and npm  must be installed.
 
+### Configuration
 
-
+* Set up a Spotify developer account and create an app. Grab the Client ID and Client Secret and replace the placeholders in the config.json file.
+* GENIUS INSTRUCTIONS
 
 
 ## Commands:
@@ -41,11 +51,13 @@ This bot relies on a user having Spotify premium and be listening along in the S
 * **$list** : Alias for $queue command.
 * **$lyrics** : Display lyrics for current song from Genius.com.
 * **$pause** : Stop playback of current song.
-* **$play + (Search Terms)** : Searches Spotify for search terms, and adds first result to queue.
+* **$unpause** : Resume playback.
+* **$play [args]** : Searches Spotify for search terms, and adds first result to queue.
 * **$queue** : Displays queue of upcoming songs.
-* **$remove + #** : Removes the #th song. If no # given, removes most recently queued song.
+
+### Future Commands
+* **$remove [index]** : Removes the #th song. If no # given, removes most recently queued song.
 * **$shuffle** : Shuffles queue of songs.
-* **$unpause** : Resumes a song playlist.
 * **$voteskip** : Initiates a vote to skip.
 
 
