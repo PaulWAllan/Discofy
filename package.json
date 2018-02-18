@@ -5,7 +5,11 @@
   "author": "Paul Allan, Aman Deol, Jason Wang, Kenney Wu, Jordan Yuen",
   "dependencies": {
     "discord.js": "^11.3.0",
+    "genius-api": "^0.4.1",
+    "lyricist": "^2.2.2",
+    "node-spotify-api": "^1.0.7",
     "node-spotify-helper": "^0.4.7",
-    "pauseable": "^0.3.0"
+    "pauseable": "^0.3.0",
+    "request-promise-native": "^1.0.5"
   }
 }
