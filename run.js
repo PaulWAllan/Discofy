@@ -5,8 +5,10 @@ const request = require("request-promise-native")
 const NodeSpotify = require ("node-spotify-helper");
 const Spotify = require('node-spotify-api');
 const Pauseable = require('pauseable');
-var api = require('genius-api');
+const EventEmitter = require('events').EventEmitter;
+const api = require('genius-api');
 const Lyricist = require('lyricist');
+
 var genius = new api("56nfJ_85b3cqnYKDp5x45sN2orHw4aL-yhZSFPcX58UH7TERSp9UdpOFkeB-nTCg");
 var songID = "";
 var lyricist = new Lyricist("kUA-Mz9F6pCtu8LKNLC2RyLOFpbEiDFzJiMBxuSvuoFsttjbHkjHcohqx6MI8UWF");
@@ -20,10 +22,20 @@ var spotify = new Spotify({
   secret: config.spotifyClientSecret
 });
 var trackQueue = [];
-
+var timeout = Pauseable.setTimeout( () => {}, 0)
 
 async function init () {
   await webHelper.connect();
+}
+
+function fetchMessage (message){
+  var fetch = message.author.username;
+}
+
+function clearQueue(){
+  if (trackQueue.length > 1){
+    trackQueue.splice(1,trackQueue.length)
+  }
 }
 
 function listQueue (message) {
@@ -37,7 +49,7 @@ function listQueue (message) {
     }
     else{
       var currTrack = trackQueue[track];
-      totalList = totalList + counter.toString() + ". " + currTrack.trackName + " - " + currTrack.trackArtist + '\n';
+      totalList = totalList + counter.toString() + ". " + currTrack.trackName + " - " + currTrack.trackArtist + ", on " + currTrack.trackAlbum + " (" + currTrack.user + ")" + '\n';
       counter++;
     }
   }
@@ -45,13 +57,25 @@ function listQueue (message) {
   message.channel.send(totalList);
 }
 
+async function skip() {
+  if (trackQueue.length === 1)
+  {
+    pauseTrack();
+    trackQueue.pop();
+  }
+  else {
+    trackQueue.shift();
+    play();
+  }
+}
+
 async function play() {
   await webHelper.play(trackQueue[0].trackUrl);
-  //TODO: set timer for length of song - pause execution for length of song
-  var timeout = Pauseable.setTimeout(() => {
-    timeout.pause();
+  timeout = Pauseable.setTimeout(() => {
+    // timeout.pause();
     trackQueue.shift();
-    // console.log(trackQueue[0].trackName);
+    //console.log("shifted");
+
     if (trackQueue.length > 0) {
       play();
     } else
@@ -59,35 +83,44 @@ async function play() {
       setTimeout(() => {
         timeout.pause();
         pauseTrack();
-      }, 1000);
+      }, 0);
     }
-  }, trackQueue[0].trackDuration - 1000);
+  }, trackQueue[0].trackDuration);
 }
 
 function nowPlaying(){
-  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "```";
+  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "\n" + "on " + trackQueue[0].trackAlbum + "\n" + "requested by " + trackQueue[0].user + "```";
 }
 
 async function removeTrackFromQueue(number, message){
+
   if(parseInt(number) !== 0){
     trackQueue.splice(parseInt(number), 1);
-    listQueue(message);
+    if(trackQueue.length === 1){
+      message.channel.send(nowPlaying());
+    }
+    else if(trackQueue.length > 1){
+      listQueue(message);
+    }
+    else{
+      message.channel.send("Queue is empty");
+    }
   }
 }
 
-async function addTrackToQueue(queryT) {
-
+async function addTrackToQueue(queryT, message) {
   await spotify
     .search({ type: 'track', query: queryT })
     .then(function(response) {
       trackQueue.push({
+        user : message.author.username,
         trackName : response.tracks.items[0].name,
         trackArtist: response.tracks.items[0].artists[0].name,
         trackAlbum: response.tracks.items[0].album.name,
         trackUrl : response.tracks.items[0].uri,
         trackDuration : response.tracks.items[0].duration_ms
       });
-      console.log(trackQueue[0]);
+      //console.log(trackQueue[0]);
     })
     .catch(function(err) {
       console.log(err);
@@ -97,34 +130,37 @@ async function addTrackToQueue(queryT) {
       play();
     }
 }
+function chunkSubstr(str, size, message) {
+  const numChunks = Math.ceil(str.length / size)
+  const chunks = new Array(numChunks)
 
-function listLyrics() {
+  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+    chunks[i] = "```" + str.substr(o, size) + "```";
+    message.channel.send(chunks[i]);
+  }
+  return chunks
+}
+async function listLyrics(message) {
   var songLyrics = "";
-  genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist).then(function(response) {
-    var s = response.hits[0].result.id;
-    songID = s;
-    return s;
-    }).then(function(s){
-      song = lyricist.song(parseInt(s), {fetchLyrics: true})
-      return songLyrics = song;
-    })
-    console.log(songLyrics);
-    return songLyrics;
+  var response = await genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist);
+  var o = await lyricist.song(parseInt(response.hits[0].result.id), {fetchLyrics: true});
+  chunkSubstr(o.lyrics, 1990, message);
 }
 
-function showArtwork() {
-  genius.search('HUMBLE. Kendrick Lamar').then(function(response) {
-    var s = response.hits[0].result.header_image_url;
-    return s;
-  })
+async function showArtwork(message) {
+  var response = await genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist);
+  var art = response.hits[0].result.header_image_url;
+  message.channel.send(art);
 }
 
 async function pauseTrack() {
   await webHelper.pause();
+  timeout.pause();
 }
 
 async function unpauseTrack() {
   await webHelper.unpause();
+  timeout.resume();
 }
 
 client.on("ready", () => {
@@ -135,11 +171,15 @@ client.on("ready", () => {
 client.on("message", (message) => {
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
+  fetchMessage(message);
+
 
     if (command == "play") {
       // Run a query
       const [...query] = args.splice(0);
-      addTrackToQueue(query.join(" "));
+      if (query.length > 0){
+        addTrackToQueue(query.join(" "), message);
+      }
     } else
     if (command == "pause") {
       pauseTrack();
@@ -159,7 +199,12 @@ client.on("message", (message) => {
       message.channel.send(commands);
     } else
     if (command === "list"){
-      listQueue(message);
+      if(trackQueue.length === 1){
+        message.channel.send(nowPlaying());
+      }
+      else if(trackQueue.length > 1){
+        listQueue(message);
+      }
     } else
     if(command === "playing"){
       message.channel.send(nowPlaying());
@@ -169,12 +214,16 @@ client.on("message", (message) => {
       removeTrackFromQueue(query.join(" "), message);
     } else
     if(command === "lyrics"){
-      var s = listLyrics();
-      console.log(s);
-      message.channel.send(s);
+      listLyrics(message);
     } else
     if(command === "art"){
-      message.channel.send(showArtwork());
+      showArtwork(message);
+    } else
+    if(command === "skip"){
+      skip();
+    }
+    if(command === "clear"){
+      clearQueue();
     }
 });
 
