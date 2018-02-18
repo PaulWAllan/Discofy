@@ -8,18 +8,22 @@ const Pauseable = require('pauseable');
 const api = require('genius-api');
 const Lyricist = require('lyricist');
 
-var genius = new api("56nfJ_85b3cqnYKDp5x45sN2orHw4aL-yhZSFPcX58UH7TERSp9UdpOFkeB-nTCg");
-var songID = "";
-var lyricist = new Lyricist("kUA-Mz9F6pCtu8LKNLC2RyLOFpbEiDFzJiMBxuSvuoFsttjbHkjHcohqx6MI8UWF");
+// Genius
+var genius = new api(config.geniusClientAccessToken);
+var lyricist = new Lyricist(config.geniusClientAccessToken);
 
-const client = new Discord.Client();
+// Spotify
 const webApi = new NodeSpotify.SpotifyWebApi ();
 const webHelper = new NodeSpotify.SpotifyWebHelper ();
-
 var spotify = new Spotify({
   id: config.spotifyClientId,
   secret: config.spotifyClientSecret
 });
+
+// Discord
+const client = new Discord.Client();
+
+// Global Vars
 var trackQueue = [];
 var timeout = Pauseable.setTimeout( () => {}, 0)
 
@@ -27,10 +31,122 @@ async function init () {
   await webHelper.connect();
 }
 
+
+//
+// Queue Management
+//
+async function play() {
+  // Play first track in queue
+  await webHelper.play(trackQueue[0].trackUrl);
+  timeout = Pauseable.setTimeout(() => {
+
+    // Remove first item
+    trackQueue.shift();
+
+    // Play next track
+    if (trackQueue.length > 0) {
+      play();
+    } else
+    // Pause after last item (Only used if auto play is enabled)
+    if (trackQueue.length == 0) {
+      setTimeout(() => {
+        timeout.pause();
+        pauseTrack();
+      }, 0);
+    }
+    // Execute above code after duration of track
+  }, trackQueue[0].trackDuration);
+}
+
+async function addTrackToQueue(queryT, message) {
+
+  //Search spotify for track, save relevant data, add to track queue
+  await spotify
+    .search({ type: 'track', query: queryT })
+    .then(function(response) {
+      trackQueue.push({
+        user : message.author.username,
+        trackName : response.tracks.items[0].name,
+        trackArtist: response.tracks.items[0].artists[0].name,
+        trackAlbum: response.tracks.items[0].album.name,
+        trackUrl : response.tracks.items[0].uri,
+        trackDuration : response.tracks.items[0].duration_ms
+      });
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+
+    //If only track, play
+    if (trackQueue.length == 1) {
+      play();
+    }
+}
+
+async function removeTrackFromQueue(number, message){
+
+  // Do not remove first item (currently playing)
+  if(parseInt(number) !== 0){
+    trackQueue.splice(parseInt(number), 1);
+    // If only element, send now playing message
+    if(trackQueue.length === 1){
+      message.channel.send(nowPlaying());
+    }
+    // If there are many left, list track queue
+    else if(trackQueue.length > 1){
+      listQueue(message);
+    }
+    // Removed current track from queue, but is still playing.
+    else{
+      message.channel.send("Queue is empty");
+    }
+  }
+}
+
+async function pauseTrack() {
+  // Pauses spotify
+  await webHelper.pause();
+
+  // Pauses duration counter
+  timeout.pause();
+}
+
+async function unpauseTrack() {
+  // Unpauses spotify
+  await webHelper.unpause();
+
+  // Unpauses duration counter
+  timeout.resume();
+}
+
+async function skip() {
+
+  // If only current song exists, remove from queue and pause
+  if (trackQueue.length === 1)
+  {
+    pauseTrack();
+    trackQueue.pop();
+  }
+  // Skip
+  else {
+    trackQueue.shift();
+    play();
+  }
+}
+
 function clearQueue(){
+  // Clears everything but current track
   if (trackQueue.length > 1){
     trackQueue.splice(1,trackQueue.length)
   }
+}
+
+
+//
+// Prints
+//
+function nowPlaying(){
+  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "\n" + "on " + trackQueue[0].trackAlbum + "\n" + "requested by " + trackQueue[0].user + "```";
 }
 
 function listQueue (message) {
@@ -52,80 +168,14 @@ function listQueue (message) {
   message.channel.send(totalList);
 }
 
-async function skip() {
-  if (trackQueue.length === 1)
-  {
-    pauseTrack();
-    trackQueue.pop();
-  }
-  else {
-    trackQueue.shift();
-    play();
-  }
-}
 
-async function play() {
-  await webHelper.play(trackQueue[0].trackUrl);
-  timeout = Pauseable.setTimeout(() => {
-    // timeout.pause();
-    trackQueue.shift();
-    //console.log("shifted");
+//
+// Genius Methods
+//
 
-    if (trackQueue.length > 0) {
-      play();
-    } else
-    if (trackQueue.length == 0) {
-      setTimeout(() => {
-        timeout.pause();
-        pauseTrack();
-      }, 0);
-    }
-  }, trackQueue[0].trackDuration);
-}
-
-function nowPlaying(){
-  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "\n" + "on " + trackQueue[0].trackAlbum + "\n" + "requested by " + trackQueue[0].user + "```";
-}
-
-async function removeTrackFromQueue(number, message){
-
-  if(parseInt(number) !== 0){
-    trackQueue.splice(parseInt(number), 1);
-    if(trackQueue.length === 1){
-      message.channel.send(nowPlaying());
-    }
-    else if(trackQueue.length > 1){
-      listQueue(message);
-    }
-    else{
-      message.channel.send("Queue is empty");
-    }
-  }
-}
-
-async function addTrackToQueue(queryT, message) {
-  await spotify
-    .search({ type: 'track', query: queryT })
-    .then(function(response) {
-      trackQueue.push({
-        user : message.author.username,
-        trackName : response.tracks.items[0].name,
-        trackArtist: response.tracks.items[0].artists[0].name,
-        trackAlbum: response.tracks.items[0].album.name,
-        trackUrl : response.tracks.items[0].uri,
-        trackDuration : response.tracks.items[0].duration_ms
-      });
-      //console.log(trackQueue[0]);
-    })
-    .catch(function(err) {
-      console.log(err);
-    });
-
-    if (trackQueue.length == 1) {
-      play();
-    }
-}
 function chunkSubstr(str, size, message) {
+  // Chunks lyrics into sendable sizes (2000 characters) and sends to channel
+
   const numChunks = Math.ceil(str.length / size)
   const chunks = new Array(numChunks)
 
@@ -135,40 +185,36 @@ function chunkSubstr(str, size, message) {
   }
   return chunks
 }
+
 async function listLyrics(message) {
-  var songLyrics = "";
+  // Finds song ID and gets lyrics
   var response = await genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist);
-  var o = await lyricist.song(parseInt(response.hits[0].result.id), {fetchLyrics: true});
-  chunkSubstr(o.lyrics, 1990, message);
+  var lyricResponse = await lyricist.song(parseInt(response.hits[0].result.id), {fetchLyrics: true});
+  chunkSubstr(lyricResponse.lyrics, 1990, message);
 }
 
 async function showArtwork(message) {
+  // Finds song ID and gets album image url
   var response = await genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist);
   var art = response.hits[0].result.header_image_url;
   message.channel.send(art);
 }
 
-async function pauseTrack() {
-  await webHelper.pause();
-  timeout.pause();
-}
 
-async function unpauseTrack() {
-  await webHelper.unpause();
-  timeout.resume();
-}
-
+//
+// Event Handlers
+//
 client.on("ready", () => {
     init();
     console.log("Discofy: Ready to roll out!");
 });
 
 client.on("message", (message) => {
+  // Parsing arguments
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
     if (command == "play") {
-      // Run a query
       const [...query] = args.splice(0);
       if (query.length > 0){
         addTrackToQueue(query.join(" "), message);
@@ -220,4 +266,5 @@ client.on("message", (message) => {
     }
 });
 
+//Bot token
 client.login(config.token);
