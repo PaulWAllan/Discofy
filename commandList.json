@@ -2,13 +2,12 @@
     "0": "**$clear** : Clears entire playlist",
     "1": "**$forceskip** : Immediately skips current song",
     "2": "**$help** : Lists commands",
-    "3": "**$list** : Alias for $queue command",
+    "3": "**$list** : Displays queue of upcoming songs",
     "4": "**$lyrics** : Display lyrics for current song from Genius.com",
     "5": "**$pause** : Stop playback of current song",
     "6": "**$play+(Search Terms)** : Searches Spotify for search terms, and adds first result to queue ",
-    "7": "**$queue** : Displays queue of upcoming songs",
-    "8": "**$remove+#** : Removes the #th song. If no # given, removes most recently queued song",
-    "9": "**$shuffle** : Shuffles queue of songs",
-    "10": "**$unpause** : Resumes a song playlist",
-    "11": "**$voteskip** : Initiates a vote to skip"
+    "7": "**$remove+#** : Removes the #th song. If no # given, removes most recently queued song",
+    "8": "**$shuffle** : Shuffles queue of songs",
+    "9": "**$unpause** : Resumes a song playlist",
+    "10": "**$voteskip** : Initiates a vote to skip"
 }
