@@ -5,6 +5,11 @@ const request = require("request-promise-native")
 const NodeSpotify = require ("node-spotify-helper");
 const Spotify = require('node-spotify-api');
 const Pauseable = require('pauseable');
+var api = require('genius-api');
+const Lyricist = require('lyricist');
+var genius = new api("56nfJ_85b3cqnYKDp5x45sN2orHw4aL-yhZSFPcX58UH7TERSp9UdpOFkeB-nTCg");
+var songID = "";
+var lyricist = new Lyricist("kUA-Mz9F6pCtu8LKNLC2RyLOFpbEiDFzJiMBxuSvuoFsttjbHkjHcohqx6MI8UWF");
 
 const client = new Discord.Client();
 const webApi = new NodeSpotify.SpotifyWebApi ();
@@ -21,6 +26,24 @@ async function init () {
   await webHelper.connect();
 }
 
+function listQueue (message) {
+  var totalList = "";
+  var counter = 0;
+  for (var track in trackQueue ) {
+    if(counter === 0){
+      totalList = totalList + nowPlaying() + '\n';
+      counter++;
+      totalList = totalList + "```";
+    }
+    else{
+      var currTrack = trackQueue[track];
+      totalList = totalList + counter.toString() + ". " + currTrack.trackName + " - " + currTrack.trackArtist + '\n';
+      counter++;
+    }
+  }
+  totalList = totalList + "```";
+  message.channel.send(totalList);
+}
 
 async function play() {
   await webHelper.play(trackQueue[0].trackUrl);
@@ -39,6 +62,17 @@ async function play() {
       }, 1000);
     }
   }, trackQueue[0].trackDuration - 1000);
+}
+
+function nowPlaying(){
+  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "```";
+}
+
+async function removeTrackFromQueue(number, message){
+  if(parseInt(number) !== 0){
+    trackQueue.splice(parseInt(number), 1);
+    listQueue(message);
+  }
 }
 
 async function addTrackToQueue(queryT) {
@@ -62,6 +96,27 @@ async function addTrackToQueue(queryT) {
     if (trackQueue.length == 1) {
       play();
     }
+}
+
+function listLyrics() {
+  var songLyrics = "";
+  genius.search(trackQueue[0].trackName + " " + trackQueue[0].trackArtist).then(function(response) {
+    var s = response.hits[0].result.id;
+    songID = s;
+    return s;
+    }).then(function(s){
+      song = lyricist.song(parseInt(s), {fetchLyrics: true})
+      return songLyrics = song;
+    })
+    console.log(songLyrics);
+    return songLyrics;
+}
+
+function showArtwork() {
+  genius.search('HUMBLE. Kendrick Lamar').then(function(response) {
+    var s = response.hits[0].result.header_image_url;
+    return s;
+  })
 }
 
 async function pauseTrack() {
@@ -102,6 +157,24 @@ client.on("message", (message) => {
           }
       }
       message.channel.send(commands);
+    } else
+    if (command === "list"){
+      listQueue(message);
+    } else
+    if(command === "playing"){
+      message.channel.send(nowPlaying());
+    } else
+    if(command === "remove"){
+      const [...query] = args.splice(0);
+      removeTrackFromQueue(query.join(" "), message);
+    } else
+    if(command === "lyrics"){
+      var s = listLyrics();
+      console.log(s);
+      message.channel.send(s);
+    } else
+    if(command === "art"){
+      message.channel.send(showArtwork());
     }
 });
 
