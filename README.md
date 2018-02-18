@@ -40,8 +40,7 @@ This bot relies on a user having Spotify premium and be listening along in the S
 ### Configuration
 
 * Set up a Spotify developer account and create an app. Grab the Client ID and Client Secret and replace the placeholders in the config.json file.
-* GENIUS INSTRUCTIONS
-
+* Set up Genuis account. Get your Client Access Token from the Genius API Clients page and enter it in the appropriate field in the config.json file.
 
 ## Commands:
 * **$artwork** : Displays currently playing song's album artwork.
