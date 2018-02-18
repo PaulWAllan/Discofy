@@ -5,7 +5,6 @@ const request = require("request-promise-native")
 const NodeSpotify = require ("node-spotify-helper");
 const Spotify = require('node-spotify-api');
 const Pauseable = require('pauseable');
-const EventEmitter = require('events').EventEmitter;
 const api = require('genius-api');
 const Lyricist = require('lyricist');
 
@@ -26,10 +25,6 @@ var timeout = Pauseable.setTimeout( () => {}, 0)
 
 async function init () {
   await webHelper.connect();
-}
-
-function fetchMessage (message){
-  var fetch = message.author.username;
 }
 
 function clearQueue(){
@@ -171,8 +166,6 @@ client.on("ready", () => {
 client.on("message", (message) => {
   const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
-  fetchMessage(message);
-
 
     if (command == "play") {
       // Run a query
@@ -221,7 +214,7 @@ client.on("message", (message) => {
     } else
     if(command === "skip"){
       skip();
-    }
+    } else
     if(command === "clear"){
       clearQueue();
     }
