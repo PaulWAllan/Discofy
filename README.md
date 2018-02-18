@@ -54,9 +54,9 @@ This bot relies on a user having Spotify premium and be listening along in the S
 * **$unpause** : Resume playback.
 * **$play [args]** : Searches Spotify for search terms, and adds first result to queue.
 * **$queue** : Displays queue of upcoming songs.
+* **remove [index]** : Removes a song based on its position in the queue. If no index is given, removes most recently queued song.
 
 ### Future Commands
-* **$remove [index]** : Removes the #th song. If no # given, removes most recently queued song.
 * **$shuffle** : Shuffles queue of songs.
 * **$voteskip** : Initiates a vote to skip.
 
