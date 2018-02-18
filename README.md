@@ -23,7 +23,7 @@ The inspiration for this bot is to interface with Spotify so that a user can all
 
 This bot relies on a user having Spotify premium and be listening along in the Spotify app.
 
-##Install: 
+## Install: 
 
 
 
