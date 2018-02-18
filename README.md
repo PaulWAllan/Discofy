@@ -13,16 +13,11 @@
 **Authors**:
 
 _Team Sandbagging_:
-
-Paul Allan
-
-Aman Deol
-
-Jason Wang
-
-Kenney Wu
-
-Jordan Yuen
+* Paul Allan
+* Aman Deol
+* Jason Wang
+* Kenney Wu
+* Jordan Yuen
 
 **Purpose**: 
 
