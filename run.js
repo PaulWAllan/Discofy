@@ -211,58 +211,60 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
   // Parsing arguments
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
+  if (message.content.startsWith(config.prefix)) {
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
 
-    if (command == "play") {
-      const [...query] = args.splice(0);
-      if (query.length > 0){
-        addTrackToQueue(query.join(" "), message);
-      }
-    } else
-    if (command == "pause") {
-      pauseTrack();
-    } else
-    if (command == "unpause") {
-      unpauseTrack();
-    } else
-    if (command == "help") {
-      var commands = '**Command List**' + '\n\n';
-      for(var i in commandList){
-          if(commandList.hasOwnProperty(i)){
-              var tempstring = JSON.stringify(commandList[i]);
-              tempstring = tempstring.slice(1, (tempstring.length-1));
-              commands += tempstring + '\n';
-          }
-      }
-      message.channel.send(commands);
-    } else
-    if (command === "list"){
-      if(trackQueue.length === 1){
+      if (command == "play") {
+        const [...query] = args.splice(0);
+        if (query.length > 0){
+          addTrackToQueue(query.join(" "), message);
+        }
+      } else
+      if (command == "pause") {
+        pauseTrack();
+      } else
+      if (command == "unpause") {
+        unpauseTrack();
+      } else
+      if (command == "help") {
+        var commands = '**Command List**' + '\n\n';
+        for(var i in commandList){
+            if(commandList.hasOwnProperty(i)){
+                var tempstring = JSON.stringify(commandList[i]);
+                tempstring = tempstring.slice(1, (tempstring.length-1));
+                commands += tempstring + '\n';
+            }
+        }
+        message.channel.send(commands);
+      } else
+      if (command === "list"){
+        if(trackQueue.length === 1){
+          message.channel.send(nowPlaying());
+        }
+        else if(trackQueue.length > 1){
+          listQueue(message);
+        }
+      } else
+      if(command === "playing"){
         message.channel.send(nowPlaying());
+      } else
+      if(command === "remove"){
+        const [...query] = args.splice(0);
+        removeTrackFromQueue(query.join(" "), message);
+      } else
+      if(command === "lyrics"){
+        listLyrics(message);
+      } else
+      if(command === "art"){
+        showArtwork(message);
+      } else
+      if(command === "skip"){
+        skip();
+      } else
+      if(command === "clear"){
+        clearQueue();
       }
-      else if(trackQueue.length > 1){
-        listQueue(message);
-      }
-    } else
-    if(command === "playing"){
-      message.channel.send(nowPlaying());
-    } else
-    if(command === "remove"){
-      const [...query] = args.splice(0);
-      removeTrackFromQueue(query.join(" "), message);
-    } else
-    if(command === "lyrics"){
-      listLyrics(message);
-    } else
-    if(command === "art"){
-      showArtwork(message);
-    } else
-    if(command === "skip"){
-      skip();
-    } else
-    if(command === "clear"){
-      clearQueue();
     }
 });
 
