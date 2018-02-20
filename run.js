@@ -76,11 +76,6 @@ async function addTrackToQueue(queryT, message) {
     .catch(function(err) {
       console.log(err);
     });
-
-    //If only track, play
-    if (trackQueue.length == 1) {
-      play();
-    }
 }
 
 async function removeTrackFromQueue(number, message){
@@ -90,15 +85,15 @@ async function removeTrackFromQueue(number, message){
     trackQueue.splice(parseInt(number), 1);
     // If only element, send now playing message
     if(trackQueue.length === 1){
-      message.channel.send(nowPlaying());
+      message.channel.send(prepPrint(nowPlaying()));
     }
     // If there are many left, list track queue
     else if(trackQueue.length > 1){
-      listQueue(message);
+      message.channel.send(prepPrint(listQueue()));
     }
     // Removed current track from queue, but is still playing.
     else{
-      message.channel.send("Queue is empty");
+      message.channel.send(prepPrint("Queue is empty"));
     }
   }
 }
@@ -143,36 +138,33 @@ function clearQueue(){
 
 
 //
-// Prints
+// Formatting
 //
 function nowPlaying(){
-  return "```Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "\n" + "on " + trackQueue[0].trackAlbum + "\n" + "requested by " + trackQueue[0].user + "```";
+  return "Now Playing - " + trackQueue[0].trackName + " by " + trackQueue[0].trackArtist + "\n" + "on " + trackQueue[0].trackAlbum + "\n" + "requested by " + trackQueue[0].user;
 }
 
-function listQueue (message) {
+function listQueue () {
   var totalList = "";
   var counter = 0;
   for (var track in trackQueue ) {
-    if(counter === 0){
-      totalList = totalList + nowPlaying() + '\n';
-      counter++;
-      totalList = totalList + "```";
-    }
-    else{
+    if (counter > 0) {
       var currTrack = trackQueue[track];
       totalList = totalList + counter.toString() + ". " + currTrack.trackName + " - " + currTrack.trackArtist + ", on " + currTrack.trackAlbum + " (" + currTrack.user + ")" + '\n';
-      counter++;
     }
+    counter++
   }
-  totalList = totalList + "```";
-  message.channel.send(totalList);
+  return totalList;
+}
+
+function prepPrint(msg) {
+  return "```" + msg + "```";
 }
 
 
 //
 // Genius Methods
 //
-
 function chunkSubstr(str, size, message) {
   // Chunks lyrics into sendable sizes (2000 characters) and sends to channel
 
@@ -219,13 +211,21 @@ client.on("message", (message) => {
         const [...query] = args.splice(0);
         if (query.length > 0){
           addTrackToQueue(query.join(" "), message);
+
+          //If only track, play
+          if (trackQueue.length == 1) {
+            play();
+          }
         }
       } else
       if (command == "pause") {
         pauseTrack();
+        message.channel.send(prepPrint("Playback paused!"));
       } else
       if (command == "unpause") {
         unpauseTrack();
+        message.channel.send(prepPrint("Playback unpaused!"));
+
       } else
       if (command == "help") {
         var commands = '**Command List**' + '\n\n';
@@ -240,14 +240,16 @@ client.on("message", (message) => {
       } else
       if (command === "list"){
         if(trackQueue.length === 1){
-          message.channel.send(nowPlaying());
+          message.channel.send(prepPrint(nowPlaying()));
         }
         else if(trackQueue.length > 1){
-          listQueue(message);
+          // listQueue(message);
+          message.channel.send(prepPrint(nowPlaying()));
+          message.channel.send(prepPrint(listQueue()));
         }
       } else
       if(command === "playing"){
-        message.channel.send(nowPlaying());
+        message.channel.send(prepPrint(nowPlaying()));
       } else
       if(command === "remove"){
         const [...query] = args.splice(0);
@@ -261,9 +263,11 @@ client.on("message", (message) => {
       } else
       if(command === "skip"){
         skip();
+        message.channel.send(prepPrint(nowPlaying()));
       } else
       if(command === "clear"){
         clearQueue();
+        message.channel.send(prepPrint("Queue cleared"));
       }
     }
 });
