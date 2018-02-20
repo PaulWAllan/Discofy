@@ -9,5 +9,5 @@
     "7": "**$play [Search Terms]** : Searches Spotify for search terms, and adds first result to queue.",
     "8": "**$playing** : Displays information of currently playing song.",
     "9": "**$remove [index]** : Removes the #th song. If no # given, removes most recently queued song.",
-    "10": "**$unpause** : Resumes a song playlist.",
+    "10": "**$unpause** : Resumes a song playlist."
 }
