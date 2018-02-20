@@ -76,6 +76,11 @@ async function addTrackToQueue(queryT, message) {
     .catch(function(err) {
       console.log(err);
     });
+
+    //If only track, play
+    if (trackQueue.length == 1) {
+      play();
+    }
 }
 
 async function removeTrackFromQueue(number, message){
@@ -104,6 +109,7 @@ async function pauseTrack() {
 
   // Pauses duration counter
   timeout.pause();
+
 }
 
 async function unpauseTrack() {
@@ -211,11 +217,6 @@ client.on("message", (message) => {
         const [...query] = args.splice(0);
         if (query.length > 0){
           addTrackToQueue(query.join(" "), message);
-
-          //If only track, play
-          if (trackQueue.length == 1) {
-            play();
-          }
         }
       } else
       if (command == "pause") {
@@ -225,7 +226,6 @@ client.on("message", (message) => {
       if (command == "unpause") {
         unpauseTrack();
         message.channel.send(prepPrint("Playback unpaused!"));
-
       } else
       if (command == "help") {
         var commands = '**Command List**' + '\n\n';
