@@ -44,11 +44,11 @@ This bot relies on a user having Spotify premium and be listening along in the S
 * Set up Genuis account. Get your Client Access Token from the Genius API Clients page and enter it in the appropriate field in the config.json file.
 
 ## Commands:
-* **$artwork** : Displays currently playing song's album artwork.
+* **$art** : Displays currently playing song's album artwork.
 * **$clear** : Clears entire playlist.
 * **$forceskip** : Immediately skips current song.
 * **$help** : Lists commands.
-* **$list** : Alias for $queue command.
+* **$list** : Display a list of queued songs.
 * **$lyrics** : Display lyrics for current song from Genius.com.
 * **$pause** : Stop playback of current song.
 * **$unpause** : Resume playback.
@@ -59,7 +59,3 @@ This bot relies on a user having Spotify premium and be listening along in the S
 ### Future Commands
 * **$shuffle** : Shuffles queue of songs.
 * **$voteskip** : Initiates a vote to skip.
-
-
-
-
