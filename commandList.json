@@ -1,15 +1,13 @@
 {
-    "0": "**$artwork** : Displays currently playing song's album artwork.",
+    "0": "**$art** : Displays currently playing song's album artwork.",
     "1": "**$clear** : Clears entire playlist.",
-    "2": "**$forceskip** : Immediately skips current song.",
+    "2": "**$skip** : Immediately skips current song.",
     "3": "**$help** : Lists commands.",
     "4": "**$list** : Displays queue of upcoming songs.",
     "5": "**$lyrics** : Display lyrics for current song from Genius.com.",
     "6": "**$pause** : Stop playback of current song.",
-    "7": "**$play+(Search Terms)** : Searches Spotify for search terms, and adds first result to queue.",
+    "7": "**$play [Search Terms]** : Searches Spotify for search terms, and adds first result to queue.",
     "8": "**$playing** : Displays information of currently playing song.",
-    "9": "**$remove+#** : Removes the #th song. If no # given, removes most recently queued song.",
-    "10": "**$shuffle** : Shuffles queue of songs.",
-    "11": "**$unpause** : Resumes a song playlist.",
-    "12": "**$voteskip** : Initiates a vote to skip."
+    "9": "**$remove [index]** : Removes the #th song. If no # given, removes most recently queued song.",
+    "10": "**$unpause** : Resumes a song playlist.",
 }

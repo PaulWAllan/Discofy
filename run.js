@@ -64,19 +64,20 @@ async function addTrackToQueue(queryT, message) {
   await spotify
     .search({ type: 'track', query: queryT })
     .then(function(response) {
-      trackQueue.push({
+      var track = {
         user : message.author.username,
         trackName : response.tracks.items[0].name,
         trackArtist: response.tracks.items[0].artists[0].name,
         trackAlbum: response.tracks.items[0].album.name,
         trackUrl : response.tracks.items[0].uri,
         trackDuration : response.tracks.items[0].duration_ms
-      });
+      };
+      trackQueue.push(track);
+      message.channel.send(prepPrint("Queued:" + formatTrack(track)));  
     })
     .catch(function(err) {
       console.log(err);
     });
-
     //If only track, play
     if (trackQueue.length == 1) {
       play();
@@ -156,7 +157,7 @@ function listQueue () {
   for (var track in trackQueue ) {
     if (counter > 0) {
       var currTrack = trackQueue[track];
-      totalList = totalList + counter.toString() + ". " + currTrack.trackName + " - " + currTrack.trackArtist + ", on " + currTrack.trackAlbum + " (" + currTrack.user + ")" + '\n';
+      totalList = totalList + counter.toString() + ". " + formatTrack(currTrack) + '\n';
     }
     counter++
   }
@@ -165,6 +166,10 @@ function listQueue () {
 
 function prepPrint(msg) {
   return "```" + msg + "```";
+}
+
+function formatTrack(track) {
+  return track.trackName + " - " + track.trackArtist + ", on " + track.trackAlbum + " (" + track.user + ")";
 }
 
 

@@ -46,16 +46,24 @@ This bot relies on a user having Spotify premium and be listening along in the S
 ## Commands:
 * **$art** : Displays currently playing song's album artwork.
 * **$clear** : Clears entire playlist.
-* **$forceskip** : Immediately skips current song.
+* **$skip** : Immediately skips current song.
 * **$help** : Lists commands.
 * **$list** : Display a list of queued songs.
 * **$lyrics** : Display lyrics for current song from Genius.com.
 * **$pause** : Stop playback of current song.
 * **$unpause** : Resume playback.
 * **$play [args]** : Searches Spotify for search terms, and adds first result to queue.
-* **$queue** : Displays queue of upcoming songs.
-* **remove [index]** : Removes a song based on its position in the queue. If no index is given, removes most recently queued song.
+* **$remove [index]** : Removes a song based on its position in the queue. If no index is given, removes most recently queued song.
 
-### Future Commands
+## Known Issues
+* Does not handle empty Spotify API responses causing various issues.
+
+## Future Development
+* Permissions
+* Deleting command messages
+* Displaying 'Now Playing' message whenever a new song is playing.
+
+### Commands
 * **$shuffle** : Shuffles queue of songs.
 * **$voteskip** : Initiates a vote to skip.
+* **$playalbum** : Queues up an entire album.
