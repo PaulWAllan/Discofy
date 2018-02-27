@@ -18,7 +18,7 @@ A Discord bot created for the CSSS Mountain Madness Hackathon 2018
 * Kenney Wu
 * Jordan Yuen
 
-## Purpose: 
+## Purpose:
 
 The inspiration for this bot is to interface with Spotify so that a user can allow other Discord users to queue up music in a playlist without having to use a Spotify collaborative playlist. Users can then use Spotify to "Listen Along" to the host. Users can also ask for the lyrics directly through the bot and get current track information and album artwork.
 
@@ -29,7 +29,7 @@ This bot relies on a user having Spotify premium and be listening along in the S
 1. Clone or zip this repository to anywhere on your computer.
 2. Run `npm update -S` on the root directory of Discofy.
 3. Configure the bot (Instructions below).
-4. Invite the bot to your server using this link: `https://discordapp.com/oauth2/authorize?&client_id=415299118676836355&scope=bot&permissions=0`
+4. Invite the bot to your server using this link:
 5. Run `node run.js` on the root directory of Discofy.
 
 ### Requirements
@@ -40,6 +40,7 @@ This bot relies on a user having Spotify premium and be listening along in the S
 
 ### Configuration
 
+* Set up a new Discord App, and add the bot token to the placeholder in the config.json file. Invite the bot using this link: `https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID_HERE&scope=bot&permissions=0`. Replacing `CLIENT_ID_HERE` with your Discord App's client ID.
 * Set up a Spotify developer account and create an app. Grab the Client ID and Client Secret and replace the placeholders in the config.json file.
 * Set up Genuis account. Get your Client Access Token from the Genius API Clients page and enter it in the appropriate field in the config.json file.
 
