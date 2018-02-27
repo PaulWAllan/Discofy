@@ -29,8 +29,7 @@ This bot relies on a user having Spotify premium and be listening along in the S
 1. Clone or zip this repository to anywhere on your computer.
 2. Run `npm update -S` on the root directory of Discofy.
 3. Configure the bot (Instructions below).
-4. Invite the bot to your server using this link:
-5. Run `node run.js` on the root directory of Discofy.
+4. Run `node run.js` on the root directory of Discofy.
 
 ### Requirements
 
