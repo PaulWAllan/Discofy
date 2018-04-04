@@ -20,9 +20,7 @@ A Discord bot created for the CSSS Mountain Madness Hackathon 2018
 
 ## Purpose:
 
-The inspiration for this bot is to interface with Spotify so that a user can allow other Discord users to queue up music in a playlist without having to use a Spotify collaborative playlist. Users can then use Spotify to "Listen Along" to the host. Users can also ask for the lyrics directly through the bot and get current track information and album artwork.
-
-This bot relies on a user having Spotify premium and be listening along in the Spotify app.
+As of Febuary 18th 2018, users wishing to queue up and listen music collectively would have to use a Spotify collaborative playlist. The Discofy bot has been created to provide that functionality through Discord itself to “Listen Along” with a host. The bot is also able to provide current track information, album artwork, and lyrics of the song being listened to.  All users wishing to “Listen Along” must have a Spotify premium account. 
 
 ## Install
 
