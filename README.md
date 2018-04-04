@@ -37,9 +37,17 @@ As of Febuary 18th 2018, users wishing to queue up and listen music collectively
 
 ### Configuration
 
-* Set up a new Discord App, and add the bot token to the placeholder in the config.json file. Invite the bot using this link: `https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID_HERE&scope=bot&permissions=0`. Replacing `CLIENT_ID_HERE` with your Discord App's client ID.
-* Set up a Spotify developer account and create an app. Grab the Client ID and Client Secret and replace the placeholders in the config.json file.
-* Set up Genuis account. Get your Client Access Token from the Genius API Clients page and enter it in the appropriate field in the config.json file.
+1) Setup a new Discord Application
+2) Open up the config.json file and add the bot token to replace the placeholder
+3) The bot can only be invited to a particular Discord server if the current user is an administrator.
+Replace CLIENT_ID_HERE with the new Discord Application's client ID and follow the link:
+https://discordapp.com/oauth2/authorize?&client_id=CLIENT_ID_HERE&scope=bot&permissions=0.
+
+4) Using a Spotify developer account, create a new Spotify Application
+5) In the config.json file, take the Client ID and the Client Secret of the Spotify application and replace the placeholders respectively. 
+
+6) Create a Genius account
+7) In the config.json file, use the Client Access Token from your Genius API Clients page and replace the placeholder of the respective field.
 
 ## Commands:
 * **$art** : Displays currently playing song's album artwork.
